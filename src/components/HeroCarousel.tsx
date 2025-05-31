@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, Play, ArrowDown } from 'lucide-react';
 
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const slides = [
     {
@@ -53,55 +53,96 @@ const HeroCarousel = () => {
         {slides.map((slide, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-transform duration-1000 ease-in-out ${
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
               index === currentSlide
-                ? 'transform translate-x-0'
+                ? 'transform translate-x-0 opacity-100'
                 : index < currentSlide
-                ? 'transform -translate-x-full'
-                : 'transform translate-x-full'
+                ? 'transform -translate-x-full opacity-0'
+                : 'transform translate-x-full opacity-0'
             }`}
           >
-            {/* Background Image */}
+            {/* Background Image with Enhanced Parallax */}
             <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-              style={{ backgroundImage: `url(${slide.image})` }}
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-110"
+              style={{ 
+                backgroundImage: `url(${slide.image})`,
+                transform: `scale(1.1) translateY(${index === currentSlide ? 0 : 20}px)`,
+                transition: 'transform 1.5s ease-out'
+              }}
             >
-              <div className="absolute inset-0 bg-black/40"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-black/50"></div>
             </div>
 
-            {/* Content */}
+            {/* Enhanced Content */}
             <div className="relative z-10 flex items-center justify-center h-full">
               <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto text-center text-white">
-                  <div className="animate-fade-in">
+                  <div className={`transition-all duration-1000 delay-300 ${
+                    index === currentSlide 
+                      ? 'opacity-100 translate-y-0' 
+                      : 'opacity-0 translate-y-8'
+                  }`}>
+                    {/* Animated Stars */}
                     <div className="flex justify-center mb-4">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-6 h-6 text-royal-gold fill-current" />
+                        <Star 
+                          key={i} 
+                          className="w-6 h-6 text-royal-gold fill-current animate-pulse"
+                          style={{ animationDelay: `${i * 0.1}s` }}
+                        />
                       ))}
                     </div>
-                    <p className="text-royal-gold font-medium mb-4 tracking-wider uppercase">
+                    
+                    <p className="text-royal-gold font-medium mb-4 tracking-wider uppercase animate-fade-in">
                       {slide.subtitle}
                     </p>
+                    
                     <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                      {slide.title}
+                      <span className="inline-block animate-slide-in" style={{ animationDelay: '0.2s' }}>
+                        {slide.title.split(' ')[0]}
+                      </span>{' '}
+                      <span className="inline-block animate-slide-in" style={{ animationDelay: '0.4s' }}>
+                        {slide.title.split(' ').slice(1).join(' ')}
+                      </span>
                     </h1>
-                    <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed opacity-90">
+                    
+                    <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed opacity-90 animate-fade-in">
                       {slide.description}
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
                       <Button 
                         size="lg" 
-                        className="bg-royal-gold hover:bg-royal-darkGold text-white px-8 py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+                        className="bg-royal-gold hover:bg-royal-darkGold text-white px-8 py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-105 group"
                       >
                         {slide.cta}
+                        <ArrowDown className="w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform duration-300" />
                       </Button>
                       <Button 
                         variant="outline" 
                         size="lg" 
-                        className="border-2 border-white text-white hover:bg-white hover:text-royal-brown px-8 py-4 text-lg font-semibold transition-all duration-300"
+                        className="border-2 border-white text-white hover:bg-white hover:text-royal-brown px-8 py-4 text-lg font-semibold transition-all duration-300 group"
+                        onClick={() => setIsVideoPlaying(true)}
                       >
-                        Learn More
+                        <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" />
+                        Watch Story
                       </Button>
+                    </div>
+
+                    {/* Trust Indicators */}
+                    <div className="mt-12 flex items-center justify-center gap-8 text-sm opacity-80">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span>Fresh Daily</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                        <span>Free Delivery</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                        <span>25+ Years</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -111,43 +152,82 @@ const HeroCarousel = () => {
         ))}
       </div>
 
-      {/* Navigation Arrows */}
+      {/* Enhanced Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300"
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 group"
       >
-        <ChevronLeft className="w-6 h-6" />
+        <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-300" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 group"
       >
-        <ChevronRight className="w-6 h-6" />
+        <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
       </button>
 
-      {/* Slide Indicators */}
+      {/* Enhanced Slide Indicators */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-3">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+            className={`relative transition-all duration-300 ${
               index === currentSlide
-                ? 'bg-royal-gold scale-125'
-                : 'bg-white/50 hover:bg-white/70'
-            }`}
-          />
+                ? 'w-12 h-3 bg-royal-gold'
+                : 'w-3 h-3 bg-white/50 hover:bg-white/70'
+            } rounded-full`}
+          >
+            {index === currentSlide && (
+              <div className="absolute inset-0 bg-royal-gold rounded-full animate-pulse"></div>
+            )}
+          </button>
         ))}
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 right-8 z-20 animate-float">
-        <div className="text-white text-center">
-          <p className="text-sm mb-2">Scroll Down</p>
-          <div className="w-6 h-10 border-2 border-white rounded-full mx-auto relative">
-            <div className="w-1 h-3 bg-white rounded-full absolute top-2 left-1/2 transform -translate-x-1/2 animate-pulse"></div>
+      {/* Enhanced Scroll Indicator */}
+      <div className="absolute bottom-8 right-8 z-20">
+        <div className="text-white text-center group cursor-pointer">
+          <p className="text-sm mb-2 group-hover:text-royal-gold transition-colors duration-300">
+            Scroll Down
+          </p>
+          <div className="w-6 h-10 border-2 border-white group-hover:border-royal-gold rounded-full mx-auto relative transition-colors duration-300">
+            <div className="w-1 h-3 bg-white group-hover:bg-royal-gold rounded-full absolute top-2 left-1/2 transform -translate-x-1/2 animate-bounce transition-colors duration-300"></div>
           </div>
         </div>
+      </div>
+
+      {/* Video Modal */}
+      {isVideoPlaying && (
+        <div 
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={() => setIsVideoPlaying(false)}
+        >
+          <div className="relative max-w-4xl w-full aspect-video bg-black rounded-lg overflow-hidden">
+            <button
+              onClick={() => setIsVideoPlaying(false)}
+              className="absolute top-4 right-4 text-white text-2xl hover:text-royal-gold transition-colors duration-300 z-10"
+            >
+              ×
+            </button>
+            <div className="w-full h-full flex items-center justify-center text-white">
+              <div className="text-center">
+                <Play className="w-16 h-16 mx-auto mb-4 text-royal-gold" />
+                <p className="text-lg">Video would play here</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Action Buttons */}
+      <div className="fixed bottom-8 left-8 z-30 flex flex-col gap-3">
+        <Button 
+          size="icon"
+          className="w-12 h-12 rounded-full bg-royal-gold hover:bg-royal-darkGold text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+        >
+          <Play className="w-6 h-6" />
+        </Button>
       </div>
     </section>
   );
