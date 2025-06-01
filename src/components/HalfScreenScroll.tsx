@@ -64,6 +64,48 @@ const HalfScreenScroll = () => {
       badgeColor: "bg-orange-500",
       features: ["Pure Ghee", "Dry Fruits", "Traditional Recipe"],
       weight: "600g (8 pieces)"
+    },
+    {
+      id: 5,
+      name: "Mysore Pak Deluxe",
+      description: "Rich, melt-in-mouth squares made with pure ghee, gram flour, and sugar. This South Indian delicacy offers an authentic taste of tradition.",
+      price: "₹650",
+      originalPrice: "₹750",
+      image: "https://images.unsplash.com/photo-1605522731013-09db28bac984?auto=format&fit=crop&w=600&q=80",
+      rating: 4.8,
+      reviews: 145,
+      badge: "Traditional",
+      badgeColor: "bg-yellow-600",
+      features: ["Pure Ghee", "Authentic Recipe", "Melt-in-Mouth"],
+      weight: "500g (16 pieces)"
+    },
+    {
+      id: 6,
+      name: "Soan Papdi Premium",
+      description: "Flaky, layered sweet made with gram flour, ghee, and sugar. Light as air and rich in taste, perfect for sharing during festivals.",
+      price: "₹380",
+      originalPrice: "₹450",
+      image: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=600&q=80",
+      rating: 4.5,
+      reviews: 189,
+      badge: "Light & Flaky",
+      badgeColor: "bg-purple-500",
+      features: ["Layered Texture", "Festival Special", "Light Weight"],
+      weight: "400g"
+    },
+    {
+      id: 7,
+      name: "Badam Halwa Royal",
+      description: "Luxurious almond halwa made with premium California almonds, pure milk, and aromatic cardamom. A royal treat for special occasions.",
+      price: "₹920",
+      originalPrice: "₹1050",
+      image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?auto=format&fit=crop&w=600&q=80",
+      rating: 4.9,
+      reviews: 167,
+      badge: "Premium",
+      badgeColor: "bg-royal-gold",
+      features: ["California Almonds", "Pure Milk", "Royal Recipe"],
+      weight: "750g"
     }
   ];
 
@@ -75,7 +117,6 @@ const HalfScreenScroll = () => {
         const containerHeight = container.offsetHeight;
         const scrollY = window.scrollY;
         
-        // Calculate which product should be active based on scroll position
         const relativeScroll = scrollY - containerTop + window.innerHeight / 2;
         const sectionHeight = containerHeight / products.length;
         const newActiveIndex = Math.floor(relativeScroll / sectionHeight);
@@ -102,15 +143,35 @@ const HalfScreenScroll = () => {
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-royal-brown mb-6">
             Handcrafted Excellence
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover our premium sweets collection, where tradition meets perfection
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Discover our premium sweets collection, where tradition meets perfection. Each sweet is carefully crafted using time-honored recipes and the finest ingredients.
           </p>
+          
+          {/* Statistics Section */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-royal-gold">25+</div>
+              <div className="text-gray-600">Years Experience</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-royal-gold">50+</div>
+              <div className="text-gray-600">Sweet Varieties</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-royal-gold">10k+</div>
+              <div className="text-gray-600">Happy Customers</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-royal-gold">4.8★</div>
+              <div className="text-gray-600">Customer Rating</div>
+            </div>
+          </div>
         </div>
 
-        <div ref={containerRef} className="grid lg:grid-cols-2 gap-12 items-center min-h-[400vh]">
+        <div ref={containerRef} className="grid lg:grid-cols-2 gap-12 items-start" style={{ minHeight: `${products.length * 100}vh` }}>
           {/* Fixed Product Details (Left Side) */}
           <div className="lg:sticky lg:top-24 lg:h-fit">
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 royal-shadow">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 royal-shadow transition-all duration-500">
               <div className="flex items-center gap-3 mb-6">
                 <Badge className={`${activeProduct.badgeColor} text-white border-0`}>
                   {activeProduct.badge}
@@ -180,37 +241,19 @@ const HalfScreenScroll = () => {
             </div>
           </div>
 
-          {/* Scrolling Product Images (Right Side) */}
-          <div className="relative">
-            {products.map((product, index) => (
-              <div
-                key={product.id}
-                className={`transition-all duration-1000 ease-out transform ${
-                  index === activeIndex
-                    ? 'opacity-100 scale-100 translate-x-0'
-                    : index < activeIndex
-                    ? 'opacity-30 scale-95 -translate-x-8'
-                    : 'opacity-30 scale-95 translate-x-8'
-                }`}
-                style={{
-                  position: index === 0 ? 'relative' : 'absolute',
-                  top: index === 0 ? 0 : '50%',
-                  left: index === 0 ? 0 : '50%',
-                  transform: index === 0 ? 'none' : 'translate(-50%, -50%)',
-                  zIndex: index === activeIndex ? 10 : 1
-                }}
-              >
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-royal-gold/20 to-transparent rounded-3xl transform rotate-6 group-hover:rotate-3 transition-transform duration-500"></div>
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="relative w-full h-96 object-cover rounded-3xl royal-shadow group-hover:shadow-2xl transition-all duration-500 transform group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
+          {/* Fixed Product Image (Right Side) */}
+          <div className="lg:sticky lg:top-24 lg:h-fit">
+            <div className="relative overflow-hidden rounded-3xl royal-shadow">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-tr from-royal-gold/20 to-transparent rounded-3xl transform rotate-6 group-hover:rotate-3 transition-transform duration-500"></div>
+                <img
+                  src={activeProduct.image}
+                  alt={activeProduct.name}
+                  className="relative w-full h-96 object-cover rounded-3xl group-hover:shadow-2xl transition-all duration-500 transform group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
