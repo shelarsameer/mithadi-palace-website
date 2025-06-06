@@ -151,4 +151,4 @@ This project is built with:
 5. **Test the integration**
    - Run the development server: `npm run dev`
    - Navigate to the Products page to ensure products are loading correctly
-   - Test the Buy buttons to ensure checkout works properly
+   - Test the Buy buttons to ensure checkout works properly.
