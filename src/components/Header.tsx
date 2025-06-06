@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Calendar } from 'lucide-react';
 import MainNav from './MainNav';
@@ -9,6 +9,7 @@ import { useCart } from '@/lib/cart-context';
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,17 +23,19 @@ const Header = () => {
   const { openCart } = useCart();
 
   const scrollToProducts = () => {
-    const element = document.getElementById('products-section');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    if (window.location.pathname === '/') {
+      const element = document.getElementById('products-section');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     } else {
-      // If not on home page, navigate to home then scroll
-      window.location.href = '/#products-section';
+      navigate('/products');
     }
+    setIsMobileMenuOpen(false);
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-royal-cream/95 backdrop-blur-md shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-royal-cream backdrop-blur-md shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -75,7 +78,7 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-royal-cream/95 backdrop-blur-md border-t border-royal-gold/20">
+          <div className="md:hidden bg-royal-cream backdrop-blur-md border-t border-royal-gold/20">
             <div className="px-4 py-6 space-y-4">
               <Link 
                 to="/" 
@@ -123,10 +126,7 @@ const Header = () => {
                 <Button 
                   variant="outline" 
                   className="w-full border-royal-gold text-royal-gold hover:bg-royal-gold hover:text-white"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    scrollToProducts();
-                  }}
+                  onClick={scrollToProducts}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
                   Schedule Order

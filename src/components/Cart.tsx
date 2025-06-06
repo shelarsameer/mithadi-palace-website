@@ -5,7 +5,7 @@ import { formatPrice } from '@/lib/shopify';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { Trash2, Plus, Minus, ShoppingBag, X } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 
 export const Cart = () => {
   const { 
@@ -16,22 +16,18 @@ export const Cart = () => {
     removeFromCart, 
     updateQuantity,
     isLoading,
-    cartCount
+    cartCount,
+    processRazorpayPayment
   } = useCart();
 
   return (
     <Sheet open={isCartOpen} onOpenChange={closeCart}>
       <SheetContent className="w-full sm:max-w-md flex flex-col h-full">
         <SheetHeader className="space-y-0 pb-4">
-          <div className="flex items-center justify-between">
-            <SheetTitle className="flex items-center gap-2">
-              <ShoppingBag className="h-5 w-5" />
-              Your Cart {cartCount > 0 && `(${cartCount})`}
-            </SheetTitle>
-            <Button variant="ghost" size="icon" className="rounded-full" onClick={closeCart}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+          <SheetTitle className="flex items-center gap-2">
+            <ShoppingBag className="h-5 w-5" />
+            Your Cart {cartCount > 0 && `(${cartCount})`}
+          </SheetTitle>
         </SheetHeader>
         
         <Separator />
@@ -142,13 +138,9 @@ export const Cart = () => {
                 <Button 
                   className="w-full"
                   disabled={!checkout || isLoading}
-                  onClick={() => {
-                    if (checkout?.webUrl) {
-                      window.location.href = checkout.webUrl;
-                    }
-                  }}
+                  onClick={processRazorpayPayment}
                 >
-                  {isLoading ? 'Processing...' : 'Checkout'}
+                  {isLoading ? 'Processing...' : 'Pay with Razorpay'}
                 </Button>
               </div>
               

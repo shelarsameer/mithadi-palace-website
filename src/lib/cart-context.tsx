@@ -1,5 +1,8 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { CartItem, ShopifyProduct, ShopifyVariant, createCheckout, updateCheckout } from './shopify';
+import { processPayment, createRazorpayOrder } from './razorpay';
+import { toast } from 'sonner';
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -19,6 +22,7 @@ interface CartContextType {
   closeCart: () => void;
   openCart: () => void;
   isLoading: boolean;
+  processRazorpayPayment: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -50,7 +54,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
@@ -59,7 +62,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [cartItems]);
 
-  // Save checkout to localStorage whenever it changes
   useEffect(() => {
     if (checkout) {
       try {
@@ -76,17 +78,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     
     try {
-      // Check if the item is already in the cart
       const existingItemIndex = cartItems.findIndex(item => item.variantId === variant.id);
       
       let newCartItems: CartItem[];
       
       if (existingItemIndex >= 0) {
-        // Update quantity if item exists
         newCartItems = [...cartItems];
         newCartItems[existingItemIndex].quantity += quantity;
       } else {
-        // Add new item
         const newItem: CartItem = {
           variantId: variant.id,
           quantity,
@@ -96,10 +95,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         newCartItems = [...cartItems, newItem];
       }
       
-      // Update the cart state
       setCartItems(newCartItems);
       
-      // Create or update checkout
       if (checkout?.id) {
         const updatedCheckout = await updateCheckout(
           checkout.id,
@@ -113,10 +110,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setCheckout(newCheckout);
       }
       
-      // Open the cart drawer
       setIsCartOpen(true);
     } catch (error) {
       console.error('Error adding item to cart:', error);
+      toast.error('Failed to add item to cart');
     } finally {
       setIsLoading(false);
     }
@@ -126,11 +123,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     
     try {
-      // Remove item from cart
       const newCartItems = cartItems.filter(item => item.variantId !== variantId);
       setCartItems(newCartItems);
       
-      // Update checkout
       if (checkout?.id && newCartItems.length > 0) {
         const updatedCheckout = await updateCheckout(
           checkout.id,
@@ -138,12 +133,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         );
         setCheckout(updatedCheckout);
       } else if (newCartItems.length === 0) {
-        // Clear checkout if cart is empty
         setCheckout(null);
         localStorage.removeItem(CHECKOUT_STORAGE_KEY);
       }
     } catch (error) {
       console.error('Error removing item from cart:', error);
+      toast.error('Failed to remove item from cart');
     } finally {
       setIsLoading(false);
     }
@@ -158,14 +153,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     
     try {
-      // Update item quantity
       const newCartItems = cartItems.map(item => 
         item.variantId === variantId ? { ...item, quantity } : item
       );
       
       setCartItems(newCartItems);
       
-      // Update checkout
       if (checkout?.id) {
         const updatedCheckout = await updateCheckout(
           checkout.id,
@@ -175,6 +168,52 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (error) {
       console.error('Error updating item quantity:', error);
+      toast.error('Failed to update quantity');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const processRazorpayPayment = async () => {
+    if (!checkout || cartItems.length === 0) {
+      toast.error('Cart is empty');
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const totalAmount = parseFloat(checkout.totalPrice.amount);
+      const razorpayOrder = await createRazorpayOrder(totalAmount);
+
+      await processPayment({
+        key: 'rzp_test_1234567890', // Replace with your Razorpay key
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: 'Mithadi Palace',
+        description: 'Order Payment',
+        order_id: razorpayOrder.id,
+        handler: async (response: any) => {
+          console.log('Payment successful:', response);
+          toast.success('Payment successful! Order placed.');
+          
+          // Here you would create the order in Shopify using Admin API
+          // and clear the cart
+          clearCart();
+          closeCart();
+        },
+        prefill: {
+          name: '',
+          email: '',
+          contact: ''
+        },
+        theme: {
+          color: '#D4A574'
+        }
+      });
+    } catch (error) {
+      console.error('Payment failed:', error);
+      toast.error('Payment failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -205,7 +244,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         toggleCart,
         closeCart,
         openCart,
-        isLoading
+        isLoading,
+        processRazorpayPayment
       }}
     >
       {children}
@@ -213,8 +253,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-// Define the hook as a named function instead of an arrow function
-// This helps with Fast Refresh compatibility
 export function useCart() {
   const context = useContext(CartContext);
   if (context === undefined) {
