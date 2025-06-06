@@ -22,15 +22,8 @@ const Header = () => {
 
   const { openCart } = useCart();
 
-  const scrollToProducts = () => {
-    if (window.location.pathname === '/') {
-      const element = document.getElementById('products-section');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      navigate('/products');
-    }
+  const handleScheduleOrder = () => {
+    navigate('/products');
     setIsMobileMenuOpen(false);
   };
 
@@ -60,7 +53,7 @@ const Header = () => {
               variant="outline" 
               size="sm" 
               className="border-royal-gold text-royal-gold hover:bg-royal-gold hover:text-white"
-              onClick={scrollToProducts}
+              onClick={handleScheduleOrder}
             >
               <Calendar className="w-4 h-4 mr-2" />
               Schedule Order
@@ -126,7 +119,7 @@ const Header = () => {
                 <Button 
                   variant="outline" 
                   className="w-full border-royal-gold text-royal-gold hover:bg-royal-gold hover:text-white"
-                  onClick={scrollToProducts}
+                  onClick={handleScheduleOrder}
                 >
                   <Calendar className="w-4 h-4 mr-2" />
                   Schedule Order
