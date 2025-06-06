@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { useCart } from '@/lib/cart-context';
 import { formatPrice } from '@/lib/shopify';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { Trash2, Plus, Minus, ShoppingBag, X } from 'lucide-react';
 
@@ -27,11 +28,9 @@ export const Cart = () => {
               <ShoppingBag className="h-5 w-5" />
               Your Cart {cartCount > 0 && `(${cartCount})`}
             </SheetTitle>
-            <SheetClose asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <X className="h-4 w-4" />
-              </Button>
-            </SheetClose>
+            <Button variant="ghost" size="icon" className="rounded-full" onClick={closeCart}>
+              <X className="h-4 w-4" />
+            </Button>
           </div>
         </SheetHeader>
         

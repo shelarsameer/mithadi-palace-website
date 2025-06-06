@@ -1,6 +1,5 @@
 
 import React from 'react';
-import Header from '@/components/Header';
 import HeroCarousel from '@/components/HeroCarousel';
 import ProductCarousel from '@/components/ProductCarousel';
 import HalfScreenScroll from '@/components/HalfScreenScroll';
@@ -13,10 +12,11 @@ import Footer from '@/components/Footer';
 const Index = () => {
   return (
     <div className="min-h-screen">
-      <Header />
       <main>
         <HeroCarousel />
-        <ProductCarousel />
+        <div id="products-section">
+          <ProductCarousel />
+        </div>
         <HalfScreenScroll />
         <ParallaxSection />
         <InteractiveFeatures />

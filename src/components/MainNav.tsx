@@ -1,7 +1,7 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { PRODUCT_CATEGORIES } from '@/lib/shopify';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart-context';
 import { ShoppingBag } from 'lucide-react';
@@ -37,18 +37,25 @@ export function MainNav({ className }: MainNavProps) {
           All Products
         </Link>
         
-        {PRODUCT_CATEGORIES.map(category => (
-          <Link 
-            key={category.id}
-            to={`/category/${category.id}`} 
-            className={cn(
-              "text-sm font-medium transition-colors hover:text-primary",
-              location.pathname === `/category/${category.id}` ? "text-primary" : "text-muted-foreground"
-            )}
-          >
-            {category.name}
-          </Link>
-        ))}
+        <Link 
+          to="/bulk-order" 
+          className={cn(
+            "text-sm font-medium transition-colors hover:text-primary",
+            location.pathname === "/bulk-order" ? "text-primary" : "text-muted-foreground"
+          )}
+        >
+          Bulk Order
+        </Link>
+        
+        <Link 
+          to="/blogs" 
+          className={cn(
+            "text-sm font-medium transition-colors hover:text-primary",
+            location.pathname === "/blogs" ? "text-primary" : "text-muted-foreground"
+          )}
+        >
+          Blogs
+        </Link>
         
         <Link 
           to="/about" 

@@ -64,48 +64,6 @@ const HalfScreenScroll = () => {
       badgeColor: "bg-orange-500",
       features: ["Pure Ghee", "Dry Fruits", "Traditional Recipe"],
       weight: "600g (8 pieces)"
-    },
-    {
-      id: 5,
-      name: "Mysore Pak Deluxe",
-      description: "Rich, melt-in-mouth squares made with pure ghee, gram flour, and sugar. This South Indian delicacy offers an authentic taste of tradition.",
-      price: "₹650",
-      originalPrice: "₹750",
-      image: "https://images.unsplash.com/photo-1605522731013-09db28bac984?auto=format&fit=crop&w=600&q=80",
-      rating: 4.8,
-      reviews: 145,
-      badge: "Traditional",
-      badgeColor: "bg-yellow-600",
-      features: ["Pure Ghee", "Authentic Recipe", "Melt-in-Mouth"],
-      weight: "500g (16 pieces)"
-    },
-    {
-      id: 6,
-      name: "Soan Papdi Premium",
-      description: "Flaky, layered sweet made with gram flour, ghee, and sugar. Light as air and rich in taste, perfect for sharing during festivals.",
-      price: "₹380",
-      originalPrice: "₹450",
-      image: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=600&q=80",
-      rating: 4.5,
-      reviews: 189,
-      badge: "Light & Flaky",
-      badgeColor: "bg-purple-500",
-      features: ["Layered Texture", "Festival Special", "Light Weight"],
-      weight: "400g"
-    },
-    {
-      id: 7,
-      name: "Badam Halwa Royal",
-      description: "Luxurious almond halwa made with premium California almonds, pure milk, and aromatic cardamom. A royal treat for special occasions.",
-      price: "₹920",
-      originalPrice: "₹1050",
-      image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?auto=format&fit=crop&w=600&q=80",
-      rating: 4.9,
-      reviews: 167,
-      badge: "Premium",
-      badgeColor: "bg-royal-gold",
-      features: ["California Almonds", "Pure Milk", "Royal Recipe"],
-      weight: "750g"
     }
   ];
 
@@ -134,8 +92,8 @@ const HalfScreenScroll = () => {
   const activeProduct = products[activeIndex] || products[0];
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-royal-cream via-white to-royal-cream/50">
-      <div className="container mx-auto px-4 py-20">
+    <section id="handcrafted-section" className="relative bg-gradient-to-br from-royal-cream via-white to-royal-cream/50 py-20">
+      <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <Badge className="bg-royal-gold/10 text-royal-gold hover:bg-royal-gold/20 mb-4">
             Signature Collection
@@ -168,7 +126,7 @@ const HalfScreenScroll = () => {
           </div>
         </div>
 
-        <div ref={containerRef} className="grid lg:grid-cols-2 gap-12 items-start" style={{ minHeight: `${products.length * 100}vh` }}>
+        <div ref={containerRef} className="grid lg:grid-cols-2 gap-12 items-start" style={{ minHeight: `${products.length * 60}vh` }}>
           {/* Fixed Product Details (Left Side) */}
           <div className="lg:sticky lg:top-24 lg:h-fit">
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 royal-shadow transition-all duration-500">
