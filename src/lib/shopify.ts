@@ -316,10 +316,10 @@ export const updateCheckout = async (checkoutId: string, items: { variantId: str
 
 // Helper function to fetch products
 export const fetchProducts = async () => {
-  // GraphQL query to fetch products from Shopify
+  // GraphQL query to fetch products from Shopify - increased limit to fetch more products
   const query = `
     query {
-      products(first: 20) {
+      products(first: 250) {
         edges {
           node {
             id

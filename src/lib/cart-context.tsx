@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { CartItem, ShopifyProduct, ShopifyVariant, createCheckout, updateCheckout } from './shopify';
 import { processPayment, createRazorpayOrder } from './razorpay';
@@ -72,6 +71,28 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [checkout]);
 
+  // Create abandoned cart tracking
+  useEffect(() => {
+    if (cartItems.length > 0 && !checkout) {
+      // Create checkout for abandoned cart tracking
+      const createAbandonedCart = async () => {
+        try {
+          const newCheckout = await createCheckout(
+            cartItems.map(item => ({ variantId: item.variantId, quantity: item.quantity }))
+          );
+          setCheckout(newCheckout);
+          console.log('Abandoned cart created in Shopify:', newCheckout.id);
+        } catch (error) {
+          console.error('Error creating abandoned cart:', error);
+        }
+      };
+      
+      // Debounce the abandoned cart creation
+      const timer = setTimeout(createAbandonedCart, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [cartItems, checkout]);
+
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const addToCart = async (product: ShopifyProduct, variant: ShopifyVariant, quantity: number) => {
@@ -111,6 +132,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       setIsCartOpen(true);
+      toast.success('Product added to cart');
     } catch (error) {
       console.error('Error adding item to cart:', error);
       toast.error('Failed to add item to cart');
@@ -184,10 +206,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     try {
       const totalAmount = parseFloat(checkout.totalPrice.amount);
+      
+      // Use test key for now - replace with your actual Razorpay key
+      const razorpayKey = 'rzp_test_1234567890'; // Replace with your actual key
+      
       const razorpayOrder = await createRazorpayOrder(totalAmount);
 
       await processPayment({
-        key: 'rzp_test_1234567890', // Replace with your Razorpay key
+        key: razorpayKey,
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
         name: 'Mithadi Palace',
@@ -198,7 +224,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           toast.success('Payment successful! Order placed.');
           
           // Here you would create the order in Shopify using Admin API
-          // and clear the cart
+          // For now, we'll clear the cart
           clearCart();
           closeCart();
         },

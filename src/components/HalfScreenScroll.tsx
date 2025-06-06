@@ -47,12 +47,12 @@ const HalfScreenScroll = () => {
       let scrollProgress = Math.max(0, Math.min(1, (viewportHeight - rect.top) / sectionHeight));
       
       // Extend the first product display time by adjusting the progress curve
-      if (scrollProgress < 0.4) {
-        // First 40% of scroll shows first product
+      if (scrollProgress < 0.5) {
+        // First 50% of scroll shows first product
         setCurrentIndex(0);
       } else {
-        // Remaining 60% of scroll distributes among remaining products
-        const adjustedProgress = (scrollProgress - 0.4) / 0.6;
+        // Remaining 50% of scroll distributes among remaining products
+        const adjustedProgress = (scrollProgress - 0.5) / 0.5;
         const newIndex = Math.min(
           products.length - 1,
           Math.floor(adjustedProgress * (products.length - 1)) + 1
@@ -86,7 +86,7 @@ const HalfScreenScroll = () => {
   const currentProduct = products[currentIndex];
 
   return (
-    <section ref={sectionRef} className="h-[250vh] relative bg-gradient-to-br from-royal-cream to-white">
+    <section ref={sectionRef} className="h-[200vh] relative bg-gradient-to-br from-royal-cream to-white">
       <div className="sticky top-0 h-screen flex items-center">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

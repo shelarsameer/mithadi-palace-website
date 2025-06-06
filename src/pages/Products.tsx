@@ -119,22 +119,28 @@ const Products = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center py-6">
             <div className="flex flex-wrap gap-2 justify-center">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
-                  className={`px-6 py-3 rounded-full font-medium text-sm transition-all duration-300 ${
-                    activeCategory === category
-                      ? 'bg-royal-gold text-white shadow-lg transform scale-105'
-                      : 'bg-white text-royal-brown border border-royal-gold/30 hover:bg-royal-gold/10 hover:border-royal-gold'
-                  }`}
-                >
-                  {category}
-                  <span className="ml-2 text-xs opacity-75">
-                    ({category === 'All Products' ? products.length : filteredProducts.length})
-                  </span>
-                </button>
-              ))}
+              {categories.map((category) => {
+                const categoryCount = category === 'All Products' 
+                  ? products.length 
+                  : products.filter(product => product.productType === category).length;
+                
+                return (
+                  <button
+                    key={category}
+                    onClick={() => setActiveCategory(category)}
+                    className={`px-6 py-3 rounded-full font-medium text-sm transition-all duration-300 ${
+                      activeCategory === category
+                        ? 'bg-royal-gold text-white shadow-lg transform scale-105'
+                        : 'bg-white text-royal-brown border border-royal-gold/30 hover:bg-royal-gold/10 hover:border-royal-gold'
+                    }`}
+                  >
+                    {category}
+                    <span className="ml-2 text-xs opacity-75">
+                      ({categoryCount})
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
