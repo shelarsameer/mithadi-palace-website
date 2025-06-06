@@ -1,7 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, ShoppingBag, Phone } from 'lucide-react';
+import { Menu, X, Phone } from 'lucide-react';
+import MainNav from './MainNav';
+import { useCart } from '@/lib/cart-context';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -16,12 +19,7 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navItems = [
-    { name: 'Home', href: '#home' },
-    { name: 'Products', href: '#products' },
-    { name: 'About', href: '#about' },
-    { name: 'Contact', href: '#contact' }
-  ];
+  const { openCart } = useCart();
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -41,27 +39,15 @@ const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-royal-brown hover:text-royal-gold transition-colors duration-300 font-medium"
-              >
-                {item.name}
-              </a>
-            ))}
-          </nav>
+          <div className="hidden md:flex items-center space-x-8">
+            <MainNav />
+          </div>
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
             <Button variant="outline" size="sm" className="border-royal-gold text-royal-gold hover:bg-royal-gold hover:text-white">
               <Phone className="w-4 h-4 mr-2" />
               Call Us
-            </Button>
-            <Button className="bg-royal-gold hover:bg-royal-darkGold text-white">
-              <ShoppingBag className="w-4 h-4 mr-2" />
-              Order Now
             </Button>
           </div>
 
@@ -78,23 +64,46 @@ const Header = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-royal-gold/20">
             <div className="px-4 py-6 space-y-4">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="block text-royal-brown hover:text-royal-gold transition-colors duration-300 font-medium"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </a>
-              ))}
+              <Link 
+                to="/" 
+                className="block text-royal-brown hover:text-royal-gold transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link 
+                to="/products" 
+                className="block text-royal-brown hover:text-royal-gold transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                All Products
+              </Link>
+              <Link 
+                to="/about" 
+                className="block text-royal-brown hover:text-royal-gold transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                About Us
+              </Link>
+              <Link 
+                to="/contact" 
+                className="block text-royal-brown hover:text-royal-gold transition-colors duration-300 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contact
+              </Link>
               <div className="pt-4 space-y-2">
                 <Button variant="outline" className="w-full border-royal-gold text-royal-gold hover:bg-royal-gold hover:text-white">
                   <Phone className="w-4 h-4 mr-2" />
                   Call Us
                 </Button>
-                <Button className="w-full bg-royal-gold hover:bg-royal-darkGold text-white">
-                  <ShoppingBag className="w-4 h-4 mr-2" />
+                <Button 
+                  className="w-full bg-royal-gold hover:bg-royal-darkGold text-white"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    openCart();
+                  }}
+                >
                   Order Now
                 </Button>
               </div>
