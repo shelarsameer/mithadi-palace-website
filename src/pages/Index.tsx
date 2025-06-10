@@ -8,6 +8,7 @@ import InteractiveFeatures from '@/components/InteractiveFeatures';
 import AboutSection from '@/components/AboutSection';
 import TestimonialCarousel from '@/components/TestimonialCarousel';
 import Footer from '@/components/Footer';
+import SnacksFarsanSection from '@/components/SnacksFarsanSection';
 
 const Index = () => {
   return (
@@ -17,6 +18,7 @@ const Index = () => {
         <div id="products-section">
           <ProductCarousel />
         </div>
+        <SnacksFarsanSection />
         <HalfScreenScroll />
         <ParallaxSection />
         <InteractiveFeatures />

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -28,7 +27,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-royal-cream backdrop-blur-md shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white backdrop-blur-md shadow-lg border-b border-gray-200">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -71,7 +70,7 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-royal-cream backdrop-blur-md border-t border-royal-gold/20">
+          <div className="md:hidden bg-white backdrop-blur-md border-t border-royal-gold/20">
             <div className="px-4 py-6 space-y-4">
               <Link 
                 to="/" 

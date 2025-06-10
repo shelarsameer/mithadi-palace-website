@@ -1,9 +1,16 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { fetchProducts, ShopifyProduct, formatPrice } from '@/lib/shopify';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart-context';
 import { Link } from 'react-router-dom';
+
+// Customize these product handles to display specific products
+const FEATURED_PRODUCT_HANDLES = [
+  'kaju-katli-premium',
+  'rasgulla-special',
+  'samosa-traditional',
+  'gulab-jamun-classic'
+];
 
 const HalfScreenScroll = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
@@ -17,13 +24,32 @@ const HalfScreenScroll = () => {
       try {
         const data = await fetchProducts();
         if (data && Array.isArray(data)) {
-          // Filter products that have "recommended" tag or are from specific categories
-          const recommendedProducts = data.filter(product => 
-            product.tags?.some(tag => tag.toLowerCase().includes('recommended')) ||
-            product.productType?.toLowerCase().includes('sweet')
-          ).slice(0, 4); // Limit to 4 products
-          
-          setProducts(recommendedProducts.length > 0 ? recommendedProducts : data.slice(0, 4));
+          // First try to get products by specific handles
+          const featuredProducts = FEATURED_PRODUCT_HANDLES.map(handle => 
+            data.find(product => product.handle === handle)
+          ).filter(Boolean) as ShopifyProduct[];
+
+          // If we don't have enough specific products, fill with recommended products
+          if (featuredProducts.length < 4) {
+            const recommendedProducts = data.filter(product => 
+              product.tags?.some(tag => tag.toLowerCase().includes('recommended')) ||
+              product.tags?.some(tag => tag.toLowerCase().includes('featured')) ||
+              product.productType?.toLowerCase().includes('sweet')
+            ).slice(0, 4 - featuredProducts.length);
+            
+            featuredProducts.push(...recommendedProducts);
+          }
+
+          // If still not enough, add any products
+          if (featuredProducts.length < 4) {
+            const remainingProducts = data.filter(product => 
+              !featuredProducts.some(fp => fp.id === product.id)
+            ).slice(0, 4 - featuredProducts.length);
+            
+            featuredProducts.push(...remainingProducts);
+          }
+
+          setProducts(featuredProducts.slice(0, 4));
         }
       } catch (error) {
         console.error('Error loading products for half-screen scroll:', error);
@@ -46,13 +72,13 @@ const HalfScreenScroll = () => {
       // Calculate scroll progress within this section with extended time for first product
       let scrollProgress = Math.max(0, Math.min(1, (viewportHeight - rect.top) / sectionHeight));
       
-      // Extend the first product display time by adjusting the progress curve
-      if (scrollProgress < 0.5) {
-        // First 50% of scroll shows first product
+      // Extend the first product display time significantly
+      if (scrollProgress < 0.6) {
+        // First 60% of scroll shows first product
         setCurrentIndex(0);
       } else {
-        // Remaining 50% of scroll distributes among remaining products
-        const adjustedProgress = (scrollProgress - 0.5) / 0.5;
+        // Remaining 40% of scroll distributes among remaining products
+        const adjustedProgress = (scrollProgress - 0.6) / 0.4;
         const newIndex = Math.min(
           products.length - 1,
           Math.floor(adjustedProgress * (products.length - 1)) + 1
@@ -86,7 +112,7 @@ const HalfScreenScroll = () => {
   const currentProduct = products[currentIndex];
 
   return (
-    <section ref={sectionRef} className="h-[200vh] relative bg-gradient-to-br from-royal-cream to-white">
+    <section ref={sectionRef} className="h-[250vh] relative bg-gradient-to-br from-royal-cream to-white">
       <div className="sticky top-0 h-screen flex items-center">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
