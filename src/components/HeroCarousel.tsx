@@ -236,25 +236,13 @@ const HeroCarousel = () => {
             >
               ×
             </button>
-            <div className="w-full h-full flex items-center justify-center text-white">
-              <div className="text-center">
-                <Play className="w-16 h-16 mx-auto mb-4 text-royal-gold" />
-                <p className="text-lg">Video would play here</p>
-              </div>
-            </div>
+           
           </div>
         </div>
       )}
 
       {/* Floating Action Buttons */}
-      <div className="fixed bottom-8 left-8 z-30 flex flex-col gap-3">
-        <Button 
-          size="icon"
-          className="w-12 h-12 rounded-full bg-royal-gold hover:bg-royal-darkGold text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
-        >
-          <Play className="w-6 h-6" />
-        </Button>
-      </div>
+      
     </section>
   );
 };
