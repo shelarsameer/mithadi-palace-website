@@ -123,7 +123,7 @@ const HalfScreenScroll = () => {
                   <img
                     src={currentProduct.images[0].url}
                     alt={currentProduct.images[0].altText || currentProduct.title}
-                    className="w-full h-full object-contain rounded-2xl transition-all duration-500"
+                    className="w-full h-full object-cover rounded-2xl transition-all duration-500"
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-100 rounded-2xl flex items-center justify-center">
