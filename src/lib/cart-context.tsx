@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { CartItem, ShopifyProduct, ShopifyVariant, createCheckout, updateCheckout } from './shopify';
 import { processPayment, createRazorpayOrder } from './razorpay';
@@ -72,36 +71,27 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [checkout]);
 
-  // Create abandoned cart tracking - always create checkout for Shopify analytics
+  // Create abandoned cart tracking
   useEffect(() => {
-    if (cartItems.length > 0) {
-      const createOrUpdateCheckout = async () => {
+    if (cartItems.length > 0 && !checkout) {
+      // Create checkout for abandoned cart tracking
+      const createAbandonedCart = async () => {
         try {
-          if (checkout?.id) {
-            // Update existing checkout
-            const updatedCheckout = await updateCheckout(
-              checkout.id,
-              cartItems.map(item => ({ variantId: item.variantId, quantity: item.quantity }))
-            );
-            setCheckout(updatedCheckout);
-          } else {
-            // Create new checkout for abandoned cart tracking
-            const newCheckout = await createCheckout(
-              cartItems.map(item => ({ variantId: item.variantId, quantity: item.quantity }))
-            );
-            setCheckout(newCheckout);
-            console.log('Checkout created for abandoned cart tracking:', newCheckout.id);
-          }
+          const newCheckout = await createCheckout(
+            cartItems.map(item => ({ variantId: item.variantId, quantity: item.quantity }))
+          );
+          setCheckout(newCheckout);
+          console.log('Abandoned cart created in Shopify:', newCheckout.id);
         } catch (error) {
-          console.error('Error creating/updating checkout:', error);
+          console.error('Error creating abandoned cart:', error);
         }
       };
       
-      // Debounce the checkout creation/update
-      const timer = setTimeout(createOrUpdateCheckout, 1000);
+      // Debounce the abandoned cart creation
+      const timer = setTimeout(createAbandonedCart, 2000);
       return () => clearTimeout(timer);
     }
-  }, [cartItems]);
+  }, [cartItems, checkout]);
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
@@ -127,6 +117,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       setCartItems(newCartItems);
+      
+      if (checkout?.id) {
+        const updatedCheckout = await updateCheckout(
+          checkout.id,
+          newCartItems.map(item => ({ variantId: item.variantId, quantity: item.quantity }))
+        );
+        setCheckout(updatedCheckout);
+      } else {
+        const newCheckout = await createCheckout(
+          newCartItems.map(item => ({ variantId: item.variantId, quantity: item.quantity }))
+        );
+        setCheckout(newCheckout);
+      }
+      
       setIsCartOpen(true);
       toast.success('Product added to cart');
     } catch (error) {
@@ -144,7 +148,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const newCartItems = cartItems.filter(item => item.variantId !== variantId);
       setCartItems(newCartItems);
       
-      if (newCartItems.length === 0) {
+      if (checkout?.id && newCartItems.length > 0) {
+        const updatedCheckout = await updateCheckout(
+          checkout.id,
+          newCartItems.map(item => ({ variantId: item.variantId, quantity: item.quantity }))
+        );
+        setCheckout(updatedCheckout);
+      } else if (newCartItems.length === 0) {
         setCheckout(null);
         localStorage.removeItem(CHECKOUT_STORAGE_KEY);
       }
@@ -170,6 +180,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
       
       setCartItems(newCartItems);
+      
+      if (checkout?.id) {
+        const updatedCheckout = await updateCheckout(
+          checkout.id,
+          newCartItems.map(item => ({ variantId: item.variantId, quantity: item.quantity }))
+        );
+        setCheckout(updatedCheckout);
+      }
     } catch (error) {
       console.error('Error updating item quantity:', error);
       toast.error('Failed to update quantity');
@@ -189,8 +207,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const totalAmount = parseFloat(checkout.totalPrice.amount);
       
-      // Replace with your actual Razorpay key
-      const razorpayKey = 'rzp_test_YOUR_KEY_HERE'; // Replace with your actual key
+      // Use test key for now - replace with your actual Razorpay key
+      const razorpayKey = 'rzp_test_1234567890'; // Replace with your actual key
       
       const razorpayOrder = await createRazorpayOrder(totalAmount);
 
@@ -209,9 +227,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // For now, we'll clear the cart
           clearCart();
           closeCart();
-          
-          // You can also redirect to a success page
-          // window.location.href = '/order-success';
         },
         prefill: {
           name: '',
