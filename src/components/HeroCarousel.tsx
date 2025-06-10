@@ -10,14 +10,6 @@ const HeroCarousel = () => {
 
   const slides = [
     {
-      title: "Royal Sweets Collection",
-      subtitle: "Crafted with Heritage & Love",
-      description: "Experience the finest traditional Indian sweets made with premium ingredients and time-honored recipes passed down through generations.",
-      media: "https://cdn.shopify.com/videos/c/o/v/16552ac62d8d4dbf86a25e9f97c2ae79.mp4",
-      type: "video",
-      cta: "Explore Collection"
-    },
-    {
       title: "Premium Mithai Selection",
       subtitle: "Taste the Tradition",
       description: "From classic rasgullas to exotic kaju katli, discover our handcrafted sweets that bring joy to every celebration and occasion.",
@@ -32,6 +24,14 @@ const HeroCarousel = () => {
       media: "https://cdn.shopify.com/videos/c/o/v/94d91cbf34294cb2852124a7e3b5c0a8.mp4",
       type: "video",
       cta: "Festival Packs"
+    },
+    {
+      title: "Royal Sweets Collection",
+      subtitle: "Crafted with Heritage & Love",
+      description: "Experience the finest traditional Indian sweets made with premium ingredients and time-honored recipes passed down through generations.",
+      media: "https://cdn.shopify.com/videos/c/o/v/16552ac62d8d4dbf86a25e9f97c2ae79.mp4",
+      type: "video",
+      cta: "Explore Collection"
     }
   ];
 
