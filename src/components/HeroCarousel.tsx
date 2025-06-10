@@ -30,7 +30,7 @@ const HeroCarousel = () => {
       subtitle: "Celebrate with Sweetness",
       description: "Make your festivals extra special with our exclusive range of traditional sweets, perfect for gifting and sharing happiness.",
       media: "https://cdn.shopify.com/videos/c/o/v/94d91cbf34294cb2852124a7e3b5c0a8.mp4",
-      type: "image",
+      type: "video",
       cta: "Festival Packs"
     }
   ];
