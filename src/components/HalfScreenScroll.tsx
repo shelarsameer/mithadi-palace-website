@@ -1,58 +1,39 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { fetchProducts, ShopifyProduct, formatPrice } from '@/lib/shopify';
+
+import React, { useState, useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { fetchProductByHandle, ShopifyProduct, formatPrice } from '@/lib/shopify';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart-context';
-import { Link } from 'react-router-dom';
 
-// Customize these product handles to display specific products
 const FEATURED_PRODUCT_HANDLES = [
-  'kaju-katli-premium',
-  'rasgulla-special',
-  'samosa-traditional',
-  'gulab-jamun-classic'
+  'kaju-katli-1-kg',
+  'motichur-laddu-1-kg', 
+  'rasgulla-1-kg'
 ];
 
 const HalfScreenScroll = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
-  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const { ref: section1Ref, inView: section1InView } = useInView({ threshold: 0.3 });
+  const { ref: section2Ref, inView: section2InView } = useInView({ threshold: 0.3 });
 
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const data = await fetchProducts();
-        if (data && Array.isArray(data)) {
-          // First try to get products by specific handles
-          const featuredProducts = FEATURED_PRODUCT_HANDLES.map(handle => 
-            data.find(product => product.handle === handle)
-          ).filter(Boolean) as ShopifyProduct[];
-
-          // If we don't have enough specific products, fill with recommended products
-          if (featuredProducts.length < 4) {
-            const recommendedProducts = data.filter(product => 
-              product.tags?.some(tag => tag.toLowerCase().includes('recommended')) ||
-              product.tags?.some(tag => tag.toLowerCase().includes('featured')) ||
-              product.productType?.toLowerCase().includes('sweet')
-            ).slice(0, 4 - featuredProducts.length);
-            
-            featuredProducts.push(...recommendedProducts);
-          }
-
-          // If still not enough, add any products
-          if (featuredProducts.length < 4) {
-            const remainingProducts = data.filter(product => 
-              !featuredProducts.some(fp => fp.id === product.id)
-            ).slice(0, 4 - featuredProducts.length);
-            
-            featuredProducts.push(...remainingProducts);
-          }
-
-          setProducts(featuredProducts.slice(0, 4));
-        }
+        const productPromises = FEATURED_PRODUCT_HANDLES.map(handle => 
+          fetchProductByHandle(handle).catch(err => {
+            console.warn(`Failed to fetch product ${handle}:`, err);
+            return null;
+          })
+        );
+        
+        const fetchedProducts = await Promise.all(productPromises);
+        const validProducts = fetchedProducts.filter(product => product !== null) as ShopifyProduct[];
+        setProducts(validProducts);
       } catch (error) {
-        console.error('Error loading products for half-screen scroll:', error);
+        console.error('Error loading featured products:', error);
       } finally {
         setLoading(false);
       }
@@ -61,36 +42,6 @@ const HalfScreenScroll = () => {
     loadProducts();
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!sectionRef.current || products.length === 0) return;
-
-      const rect = sectionRef.current.getBoundingClientRect();
-      const sectionHeight = rect.height;
-      const viewportHeight = window.innerHeight;
-      
-      // Calculate scroll progress within this section with extended time for first product
-      let scrollProgress = Math.max(0, Math.min(1, (viewportHeight - rect.top) / sectionHeight));
-      
-      // Extend the first product display time significantly
-      if (scrollProgress < 0.6) {
-        // First 60% of scroll shows first product
-        setCurrentIndex(0);
-      } else {
-        // Remaining 40% of scroll distributes among remaining products
-        const adjustedProgress = (scrollProgress - 0.6) / 0.4;
-        const newIndex = Math.min(
-          products.length - 1,
-          Math.floor(adjustedProgress * (products.length - 1)) + 1
-        );
-        setCurrentIndex(newIndex);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [products.length]);
-
   const handleAddToCart = (product: ShopifyProduct) => {
     if (product.variants && product.variants.length > 0) {
       const variant = product.variants[0];
@@ -98,105 +49,106 @@ const HalfScreenScroll = () => {
     }
   };
 
-  if (loading || products.length === 0) {
+  if (loading) {
     return (
-      <section className="h-screen bg-gradient-to-br from-royal-cream to-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-royal-gold mx-auto mb-4"></div>
-          <p className="text-royal-brown">Loading featured products...</p>
-        </div>
-      </section>
+      <div className="min-h-screen flex items-center justify-center bg-royal-cream">
+        <div className="text-royal-brown">Loading featured products...</div>
+      </div>
     );
   }
 
-  const currentProduct = products[currentIndex];
-
   return (
-    <section ref={sectionRef} className="h-[250vh] relative bg-gradient-to-br from-royal-cream to-white">
-      <div className="sticky top-0 h-screen flex items-center">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Product Image */}
-            <div className="relative">
-              <div className="aspect-square overflow-hidden rounded-3xl shadow-2xl bg-white p-8">
-                {currentProduct?.images?.[0] ? (
-                  <img
-                    src={currentProduct.images[0].url}
-                    alt={currentProduct.images[0].altText || currentProduct.title}
-                    className="w-full h-full object-cover rounded-2xl transition-all duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-100 rounded-2xl flex items-center justify-center">
-                    <span className="text-gray-400">Product Image</span>
-                  </div>
-                )}
-              </div>
-              
-              {/* Progress Indicators */}
-              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                {products.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentIndex ? 'bg-royal-gold' : 'bg-royal-gold/30'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Product Details */}
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <span className="text-royal-gold font-medium text-sm uppercase tracking-wide">
-                  Featured Product
-                </span>
-                <h2 className="text-4xl lg:text-5xl font-bold text-royal-brown leading-tight">
-                  {currentProduct?.title || 'Featured Product'}
-                </h2>
-              </div>
-
-              <p className="text-gray-600 text-lg leading-relaxed max-w-md">
-                {currentProduct?.description || 'Discover our authentic handcrafted delicacies made with traditional recipes and premium ingredients.'}
+    <div className="relative min-h-screen overflow-hidden">
+      {/* First Section */}
+      <div 
+        ref={section1Ref}
+        className="relative min-h-screen flex items-center justify-center"
+      >
+        {/* Background Image with proper aspect ratio */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: products[0]?.images[0]?.url 
+              ? `url(${products[0].images[0].url})` 
+              : 'url("https://cdn.shopify.com/s/files/1/0709/3465/9249/files/Mithadi_TheClickerGuyStudios-001.jpg")',
+            backgroundAttachment: 'fixed'
+          }}
+        />
+        <div className="absolute inset-0 bg-black/40"></div>
+        
+        {/* Content */}
+        <div className={`relative z-10 text-center text-white max-w-4xl mx-auto px-4 transition-all duration-1000 ${
+          section1InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}>
+          <h2 className="text-4xl md:text-6xl font-serif font-bold mb-6">
+            Handcrafted with Love
+          </h2>
+          <p className="text-xl md:text-2xl mb-8 leading-relaxed">
+            Every sweet tells a story of tradition, crafted with the finest ingredients 
+            and generations of expertise passed down through our family.
+          </p>
+          {products[0] && (
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 inline-block">
+              <h3 className="text-2xl font-semibold mb-2">{products[0].title}</h3>
+              <p className="text-royal-gold text-xl font-bold mb-4">
+                {products[0].variants[0] && formatPrice(products[0].variants[0].price)}
               </p>
-
-              {currentProduct?.variants?.[0] && (
-                <div className="space-y-4">
-                  <div className="text-3xl font-bold text-royal-gold">
-                    {formatPrice(currentProduct.variants[0].price)}
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button
-                      onClick={() => handleAddToCart(currentProduct)}
-                      className="bg-royal-gold hover:bg-royal-darkGold text-white px-8 py-3 text-lg"
-                      disabled={!currentProduct.variants[0].availableForSale}
-                    >
-                      {currentProduct.variants[0].availableForSale ? 'Add to Cart' : 'Out of Stock'}
-                    </Button>
-                    
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="border-royal-gold text-royal-gold hover:bg-royal-gold hover:text-white px-8 py-3 text-lg"
-                    >
-                      <Link to={`/product/${currentProduct.handle}`}>
-                        View Details
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* Product Counter */}
-              <div className="text-sm text-gray-500">
-                {currentIndex + 1} of {products.length}
-              </div>
+              <Button 
+                onClick={() => handleAddToCart(products[0])}
+                className="bg-royal-gold hover:bg-royal-darkGold text-white"
+              >
+                Add to Cart
+              </Button>
             </div>
-          </div>
+          )}
         </div>
       </div>
-    </section>
+
+      {/* Second Section */}
+      <div 
+        ref={section2Ref}
+        className="relative min-h-screen flex items-center justify-center"
+      >
+        {/* Background Image with proper aspect ratio */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: products[1]?.images[0]?.url 
+              ? `url(${products[1].images[0].url})` 
+              : 'url("https://cdn.shopify.com/s/files/1/0709/3465/9249/files/rasgulla.jpg")',
+            backgroundAttachment: 'fixed'
+          }}
+        />
+        <div className="absolute inset-0 bg-black/40"></div>
+        
+        {/* Content */}
+        <div className={`relative z-10 text-center text-white max-w-4xl mx-auto px-4 transition-all duration-1000 ${
+          section2InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}>
+          <h2 className="text-4xl md:text-6xl font-serif font-bold mb-6">
+            Fresh Daily Delights
+          </h2>
+          <p className="text-xl md:text-2xl mb-8 leading-relaxed">
+            Made fresh every morning using traditional methods and the purest ingredients, 
+            ensuring each bite delivers authentic taste and quality.
+          </p>
+          {products[1] && (
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 inline-block">
+              <h3 className="text-2xl font-semibold mb-2">{products[1].title}</h3>
+              <p className="text-royal-gold text-xl font-bold mb-4">
+                {products[1].variants[0] && formatPrice(products[1].variants[0].price)}
+              </p>
+              <Button 
+                onClick={() => handleAddToCart(products[1])}
+                className="bg-royal-gold hover:bg-royal-darkGold text-white"
+              >
+                Add to Cart
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
