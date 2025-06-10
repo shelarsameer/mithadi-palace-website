@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Star, Play, ArrowDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, ArrowDown } from 'lucide-react';
 
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -23,7 +23,7 @@ const HeroCarousel = () => {
       description: "Make your festivals extra special with our exclusive range of traditional sweets, perfect for gifting and sharing happiness.",
       media: "https://cdn.shopify.com/videos/c/o/v/94d91cbf34294cb2852124a7e3b5c0a8.mp4",
       type: "video",
-      cta: "Festival Packs"
+      cta: "Explore Collection"
     },
     {
       title: "Royal Sweets Collection",
@@ -136,7 +136,7 @@ const HeroCarousel = () => {
                       {slide.description}
                     </p>
                     
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
+                    <div className="flex justify-center animate-fade-in">
                       <Button 
                         size="lg" 
                         className="bg-royal-gold hover:bg-royal-darkGold text-white px-8 py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-105 group"
@@ -144,31 +144,6 @@ const HeroCarousel = () => {
                         {slide.cta}
                         <ArrowDown className="w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform duration-300" />
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="lg" 
-                        className="border-2 border-white text-white hover:bg-white hover:text-royal-brown px-8 py-4 text-lg font-semibold transition-all duration-300 group"
-                        onClick={() => setIsVideoPlaying(true)}
-                      >
-                        <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" />
-                        Watch Story
-                      </Button>
-                    </div>
-
-                    {/* Trust Indicators */}
-                    <div className="mt-12 flex items-center justify-center gap-8 text-sm opacity-80">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                        <span>Fresh Daily</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                        <span>Free Delivery</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                        <span>25+ Years</span>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -240,9 +215,6 @@ const HeroCarousel = () => {
           </div>
         </div>
       )}
-
-      {/* Floating Action Buttons */}
-      
     </section>
   );
 };
