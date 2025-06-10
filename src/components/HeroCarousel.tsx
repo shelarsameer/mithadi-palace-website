@@ -1,42 +1,39 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Star, Play, ArrowDown } from 'lucide-react';
 
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const slides = [
     {
       title: "Royal Sweets Collection",
       subtitle: "Crafted with Heritage & Love",
       description: "Experience the finest traditional Indian sweets made with premium ingredients and time-honored recipes passed down through generations.",
-      image: "https://cdn.shopify.com/s/files/1/0709/3465/9249/files/Mithadi_TheClickerGuyStudios-001.jpg?v=1749582677",
+      media: "https://cdn.shopify.com/videos/c/o/v/16552ac62d8d4dbf86a25e9f97c2ae79.mp4",
+      type: "video",
       cta: "Explore Collection"
     },
     {
       title: "Premium Mithai Selection",
       subtitle: "Taste the Tradition",
       description: "From classic rasgullas to exotic kaju katli, discover our handcrafted sweets that bring joy to every celebration and occasion.",
-      image: "https://cdn.shopify.com/videos/c/o/v/94d91cbf34294cb2852124a7e3b5c0a8.mp4",
+      media: "https://cdn.shopify.com/s/files/1/0709/3465/9249/files/Mithadi_TheClickerGuyStudios-001.jpg?v=1749582677",
+      type: "image",
       cta: "Order Fresh"
     },
     {
       title: "Festive Special Collection",
       subtitle: "Celebrate with Sweetness",
       description: "Make your festivals extra special with our exclusive range of traditional sweets, perfect for gifting and sharing happiness.",
-      image: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=1920&q=80",
+      media: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=1920&q=80",
+      type: "image",
       cta: "Festival Packs"
     }
   ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    
-    return () => clearInterval(timer);
-  }, [slides.length]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -45,6 +42,21 @@ const HeroCarousel = () => {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
+
+  const handleVideoEnded = () => {
+    nextSlide();
+  };
+
+  // Auto-advance for image slides only
+  useEffect(() => {
+    const currentMediaType = slides[currentSlide]?.type;
+    if (currentMediaType === 'image') {
+      const timer = setInterval(() => {
+        nextSlide();
+      }, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [currentSlide]);
 
   return (
     <section id="home" className="relative h-screen overflow-hidden">
@@ -61,19 +73,33 @@ const HeroCarousel = () => {
                 : 'transform translate-x-full opacity-0'
             }`}
           >
-            {/* Background Image with Enhanced Parallax */}
-            <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-110"
-              style={{ 
-                backgroundImage: `url(${slide.image})`,
-                transform: `scale(1.1) translateY(${index === currentSlide ? 0 : 20}px)`,
-                transition: 'transform 1.5s ease-out'
-              }}
-            >
+            {/* Background Media */}
+            <div className="absolute inset-0">
+              {slide.type === 'video' ? (
+                <video
+                  ref={index === currentSlide ? videoRef : null}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  muted
+                  playsInline
+                  onEnded={handleVideoEnded}
+                >
+                  <source src={slide.media} type="video/mp4" />
+                </video>
+              ) : (
+                <div
+                  className="w-full h-full bg-cover bg-center bg-no-repeat transform scale-110"
+                  style={{ 
+                    backgroundImage: `url(${slide.media})`,
+                    transform: `scale(1.1) translateY(${index === currentSlide ? 0 : 20}px)`,
+                    transition: 'transform 1.5s ease-out'
+                  }}
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-black/50"></div>
             </div>
 
-            {/* Enhanced Content */}
+            {/* Content */}
             <div className="relative z-10 flex items-center justify-center h-full">
               <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto text-center text-white">
@@ -152,7 +178,7 @@ const HeroCarousel = () => {
         ))}
       </div>
 
-      {/* Enhanced Navigation Arrows */}
+      {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
         className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 group"
@@ -166,7 +192,7 @@ const HeroCarousel = () => {
         <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
       </button>
 
-      {/* Enhanced Slide Indicators */}
+      {/* Slide Indicators */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-3">
         {slides.map((_, index) => (
           <button
@@ -185,7 +211,7 @@ const HeroCarousel = () => {
         ))}
       </div>
 
-      {/* Enhanced Scroll Indicator */}
+      {/* Scroll Indicator */}
       <div className="absolute bottom-8 right-8 z-20">
         <div className="text-white text-center group cursor-pointer">
           <p className="text-sm mb-2 group-hover:text-royal-gold transition-colors duration-300">

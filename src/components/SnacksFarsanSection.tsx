@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -11,7 +11,13 @@ const SnacksFarsanSection = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const { addToCart } = useCart();
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Minimum swipe distance
+  const minSwipeDistance = 50;
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -21,9 +27,11 @@ const SnacksFarsanSection = () => {
         if (data && Array.isArray(data)) {
           const filteredProducts = data.filter(product => {
             const productType = product.productType?.toLowerCase() || '';
+            const tags = product.tags?.map(tag => tag.toLowerCase()) || [];
+            
             return activeTab === 'snacks' 
-              ? productType.includes('snack') || productType.includes('namkeen')
-              : productType.includes('farsan') || productType.includes('savory');
+              ? productType.includes('snack') || productType.includes('namkeen') || tags.some(tag => tag.includes('snack'))
+              : productType.includes('farsan') || productType.includes('savory') || tags.some(tag => tag.includes('farsan'));
           });
           setProducts(filteredProducts);
           setCurrentIndex(0);
@@ -65,13 +73,40 @@ const SnacksFarsanSection = () => {
 
   const getVisibleProducts = () => {
     if (products.length === 0) return [];
-    const visibleCount = 4;
+    // For mobile: show 1 product, for desktop: show 4 products
+    const isMobile = window.innerWidth < 768;
+    const visibleCount = isMobile ? 1 : 4;
     const result = [];
     for (let i = 0; i < visibleCount; i++) {
       const index = (currentIndex + i) % products.length;
       result.push(products[index]);
     }
     return result;
+  };
+
+  // Touch handlers for swipe functionality
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      nextSlide();
+    }
+    if (isRightSwipe) {
+      prevSlide();
+    }
   };
 
   if (loading) {
@@ -132,7 +167,13 @@ const SnacksFarsanSection = () => {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div 
+                ref={carouselRef}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+              >
                 {getVisibleProducts().map((product, index) => {
                   const image = product.images?.[0];
                   const variant = product.variants?.[0];
@@ -185,16 +226,16 @@ const SnacksFarsanSection = () => {
                 })}
               </div>
 
-              {/* Navigation Arrows */}
+              {/* Navigation Arrows - Hidden on mobile */}
               <button
                 onClick={prevSlide}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-royal-gold p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-royal-gold p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 hidden md:block"
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
               <button
                 onClick={nextSlide}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-royal-gold p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-royal-gold p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 hidden md:block"
               >
                 <ChevronRight className="w-6 h-6" />
               </button>
