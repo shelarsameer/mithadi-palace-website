@@ -18,7 +18,7 @@ const HeroCarousel = () => {
       title: "Premium Mithai Selection",
       subtitle: "Taste the Tradition",
       description: "From classic rasgullas to exotic kaju katli, discover our handcrafted sweets that bring joy to every celebration and occasion.",
-      image: "https://images.unsplash.com/photo-1721322800607-8c38375eef04?auto=format&fit=crop&w=1920&q=80",
+      image: "https://cdn.shopify.com/videos/c/o/v/94d91cbf34294cb2852124a7e3b5c0a8.mp4",
       cta: "Order Fresh"
     },
     {
