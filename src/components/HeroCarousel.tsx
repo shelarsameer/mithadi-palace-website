@@ -11,7 +11,7 @@ const HeroCarousel = () => {
       title: "Royal Sweets Collection",
       subtitle: "Crafted with Heritage & Love",
       description: "Experience the finest traditional Indian sweets made with premium ingredients and time-honored recipes passed down through generations.",
-      image: "https://drive.google.com/file/d/1BcO5k7QuPXnAOoKaXF8zZXKrIeeP3bRF/view?usp=sharing",
+      image: "https://drive.google.com/file/d/1UUDoVMxWaA5IJFgfVtBXHLqN_NQhwqvL/view?usp=sharing",
       cta: "Explore Collection"
     },
     {
