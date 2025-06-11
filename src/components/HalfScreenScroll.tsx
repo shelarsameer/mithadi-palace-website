@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { fetchProducts, ShopifyProduct, formatPrice } from '@/lib/shopify';
 import { Button } from '@/components/ui/button';
