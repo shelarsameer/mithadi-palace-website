@@ -46,7 +46,7 @@ const SnacksFarsanSection = () => {
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-royal-brown mb-6">
-            Premium Sweet Collections
+            Snacks & Farsan
           </h2>
           <p className="text-lg md:text-xl text-royal-brown/70 max-w-3xl mx-auto leading-relaxed">
             Indulge in our handcrafted selection of traditional Indian sweets and modern delicacies, 

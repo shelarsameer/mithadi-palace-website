@@ -6,6 +6,9 @@ import { Star, ArrowDown } from 'lucide-react';
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
 
   const slides = [
     {
@@ -34,6 +37,29 @@ const HeroCarousel = () => {
     nextSlide();
   };
 
+  // Touch handlers for swipe functionality
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    
+    const distance = touchStartX.current - touchEndX.current;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      nextSlide();
+    } else if (isRightSwipe) {
+      setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    }
+  };
+
   // Auto-advance for image slides only
   useEffect(() => {
     const currentMediaType = slides[currentSlide]?.type;
@@ -48,7 +74,13 @@ const HeroCarousel = () => {
   return (
     <section id="home" className="relative h-screen overflow-hidden">
       {/* Carousel Container */}
-      <div className="relative w-full h-full">
+      <div 
+        ref={carouselRef}
+        className="relative w-full h-full"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {slides.map((slide, index) => (
           <div
             key={index}
