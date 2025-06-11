@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Star, Play, ArrowDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, ArrowDown } from 'lucide-react';
 
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -18,20 +18,20 @@ const HeroCarousel = () => {
       cta: "Order Fresh"
     },
     {
-      title: "Festive Special Collection",
-      subtitle: "Celebrate with Sweetness",
-      description: "Make your festivals extra special with our exclusive range of traditional sweets, perfect for gifting and sharing happiness.",
+      title: "Royal Sweets Collection",
+      subtitle: "Crafted with Heritage & Love", 
+      description: "Experience the finest traditional Indian sweets made with premium ingredients and time-honored recipes passed down through generations.",
       media: "https://cdn.shopify.com/videos/c/o/v/94d91cbf34294cb2852124a7e3b5c0a8.mp4",
       type: "video",
-      cta: "Festival Packs"
+      cta: "Explore Collection"
     },
     {
-      title: "Royal Sweets Collection",
-      subtitle: "Crafted with Heritage & Love",
-      description: "Experience the finest traditional Indian sweets made with premium ingredients and time-honored recipes passed down through generations.",
+      title: "Authentic Sweet Delights",
+      subtitle: "Traditional Craftsmanship",
+      description: "Indulge in our exquisite range of handmade sweets that capture the essence of Indian traditions and flavors.",
       media: "https://cdn.shopify.com/videos/c/o/v/16552ac62d8d4dbf86a25e9f97c2ae79.mp4",
-      type: "video",
-      cta: "Explore Collection"
+      type: "video", 
+      cta: "Shop Now"
     }
   ];
 
@@ -144,31 +144,6 @@ const HeroCarousel = () => {
                         {slide.cta}
                         <ArrowDown className="w-5 h-5 ml-2 group-hover:translate-y-1 transition-transform duration-300" />
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        size="lg" 
-                        className="border-2 border-white text-white hover:bg-white hover:text-royal-brown px-8 py-4 text-lg font-semibold transition-all duration-300 group"
-                        onClick={() => setIsVideoPlaying(true)}
-                      >
-                        <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" />
-                        Watch Story
-                      </Button>
-                    </div>
-
-                    {/* Trust Indicators */}
-                    <div className="mt-12 flex items-center justify-center gap-8 text-sm opacity-80">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                        <span>Fresh Daily</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                        <span>Free Delivery</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                        <span>25+ Years</span>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -236,13 +211,9 @@ const HeroCarousel = () => {
             >
               ×
             </button>
-           
           </div>
         </div>
       )}
-
-      {/* Floating Action Buttons */}
-      
     </section>
   );
 };
