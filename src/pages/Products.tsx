@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { fetchProducts, ShopifyProduct, formatPrice } from '@/lib/shopify';
 import { Link } from 'react-router-dom';
@@ -186,7 +187,7 @@ const Products = () => {
               const variant = product.variants && product.variants.length > 0 ? product.variants[0] : null;
               
               return (
-                <div key={product.id} className="group bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col h-full">
+                <div key={product.id} className="group bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
                   <Link to={`/product/${product.handle}`} className="block">
                     {image ? (
                       <div className="aspect-square overflow-hidden bg-gradient-to-br from-royal-cream to-white relative">
@@ -206,8 +207,8 @@ const Products = () => {
                     )}
                   </Link>
                   
-                  <div className="p-3 md:p-6 flex flex-col flex-grow">
-                    <Link to={`/product/${product.handle}`} className="block flex-grow">
+                  <div className="p-3 md:p-6">
+                    <Link to={`/product/${product.handle}`} className="block">
                       <h3 className="font-serif font-semibold text-sm md:text-xl text-royal-brown mb-2 md:mb-3 leading-tight group-hover:text-royal-gold transition-colors line-clamp-2">
                         {product.title}
                       </h3>
@@ -221,7 +222,7 @@ const Products = () => {
                       <span className="text-sm text-royal-brown/60 ml-2">(4.8)</span>
                     </div>
                     
-                    <div className="mt-auto space-y-3">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                       {variant ? (
                         <div className="flex flex-col">
                           <span className="text-lg md:text-2xl font-bold text-royal-gold">
@@ -240,12 +241,12 @@ const Products = () => {
                         <Button 
                           onClick={() => handleAddToCart(product)}
                           size="sm"
-                          className="w-full bg-royal-gold hover:bg-royal-darkGold text-white px-3 md:px-6 py-2 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-xs md:text-sm"
+                          className="bg-royal-gold hover:bg-royal-darkGold text-white px-3 md:px-6 py-1 md:py-2 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 text-xs md:text-sm"
                         >
                           Add to Cart
                         </Button>
                       ) : (
-                        <Button disabled size="sm" className="w-full rounded-full text-xs md:text-sm">
+                        <Button disabled size="sm" className="rounded-full text-xs md:text-sm">
                           Out of Stock
                         </Button>
                       )}
