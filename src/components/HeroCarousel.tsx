@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Star, ArrowDown } from 'lucide-react';
+import { Star, ArrowDown } from 'lucide-react';
 
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -17,14 +17,6 @@ const HeroCarousel = () => {
       cta: "Order Fresh"
     },
     {
-      title: "Festive Special Collection",
-      subtitle: "Celebrate with Sweetness",
-      description: "Make your festivals extra special with our exclusive range of traditional sweets, perfect for gifting and sharing happiness.",
-      media: "https://cdn.shopify.com/videos/c/o/v/94d91cbf34294cb2852124a7e3b5c0a8.mp4",
-      type: "video",
-      cta: "Explore Collection"
-    },
-    {
       title: "Royal Sweets Collection",
       subtitle: "Crafted with Heritage & Love",
       description: "Experience the finest traditional Indian sweets made with premium ingredients and time-honored recipes passed down through generations.",
@@ -36,10 +28,6 @@ const HeroCarousel = () => {
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
   const handleVideoEnded = () => {
@@ -151,20 +139,6 @@ const HeroCarousel = () => {
           </div>
         ))}
       </div>
-
-      {/* Navigation Arrows */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 group"
-      >
-        <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-300" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-4 rounded-full transition-all duration-300 hover:scale-110 group"
-      >
-        <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
-      </button>
 
       {/* Slide Indicators */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-3">
