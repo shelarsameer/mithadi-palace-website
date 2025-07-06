@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { fetchProducts, ShopifyProduct, formatPrice } from '@/lib/shopify';
+import { fetchProducts, PetPoojaProduct as ShopifyProduct, formatPrice } from '@/lib/petpooja';
 import { Link } from 'react-router-dom';
 import { useCart } from '@/lib/cart-context';
 import { Loader2, ShoppingBag, Star } from 'lucide-react';

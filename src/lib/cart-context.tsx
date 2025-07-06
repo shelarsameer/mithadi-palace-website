@@ -1,5 +1,6 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { CartItem, ShopifyProduct, ShopifyVariant, createCheckout, updateCheckout } from './shopify';
+import { CartItem, PetPoojaProduct as ShopifyProduct, PetPoojaVariant as ShopifyVariant, createCheckout, updateCheckout } from './petpooja';
 import { processPayment, createRazorpayOrder } from './razorpay';
 import { toast } from 'sonner';
 

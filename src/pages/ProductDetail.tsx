@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { fetchProductByHandle, formatPrice, ShopifyProduct, ShopifyVariant } from '@/lib/shopify';
+import { fetchProductByHandle, formatPrice, PetPoojaProduct as ShopifyProduct, PetPoojaVariant as ShopifyVariant } from '@/lib/petpooja';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart-context';
 import { Separator } from '@/components/ui/separator';

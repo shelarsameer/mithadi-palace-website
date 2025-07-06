@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useCart } from '@/lib/cart-context';
-import { formatPrice } from '@/lib/shopify';
+import { formatPrice } from '@/lib/petpooja';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';

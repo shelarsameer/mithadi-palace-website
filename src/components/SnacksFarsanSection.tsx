@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { fetchProducts, ShopifyProduct, formatPrice } from '@/lib/shopify';
+import { fetchProducts, PetPoojaProduct as ShopifyProduct, formatPrice } from '@/lib/petpooja';
 import { useCart } from '@/lib/cart-context';
 
 const SnacksFarsanSection = () => {

@@ -1,5 +1,6 @@
+
 import React, { useEffect, useState, useRef } from 'react';
-import { fetchProducts, ShopifyProduct, formatPrice } from '@/lib/shopify';
+import { fetchProducts, PetPoojaProduct as ShopifyProduct, formatPrice } from '@/lib/petpooja';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart-context';
 import { Link } from 'react-router-dom';
