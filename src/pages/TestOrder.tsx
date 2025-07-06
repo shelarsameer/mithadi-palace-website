@@ -47,7 +47,7 @@ const TestOrder = () => {
       addonId: '',
       customerName: '',
       customerPhone: '',
-      orderType: 'D',
+      orderType: 'H',
       paymentType: 'COD',
     },
   });
@@ -64,7 +64,7 @@ const TestOrder = () => {
     const now = new Date();
     return {
       preorder_date: now.toISOString().slice(0, 10),
-      preorder_time: now.toTimeString().slice(0, 5),
+      preorder_time: now.toTimeString().slice(0, 8),
       created_on: now.toISOString().slice(0, 19).replace('T', ' '),
     };
   };
@@ -77,39 +77,101 @@ const TestOrder = () => {
         app_key: import.meta.env.VITE_PETPOOJA_APP_KEY,
         app_secret: import.meta.env.VITE_PETPOOJA_APP_SECRET,
         access_token: import.meta.env.VITE_PETPOOJA_ACCESS_TOKEN,
-        restID: '4pv3z1uks5',
-        orderID: 'lovable_' + Date.now(),
-        client_order_id: 'lovable_web_' + Date.now(),
-        order_source: 'Lovable Web',
-        preorder_date,
-        preorder_time,
-        created_on,
-        device_type: 'Web',
-        order_type: data.orderType,
-        customer_name: data.customerName,
-        customer_phone: data.customerPhone,
-        payment_type: data.paymentType,
-        service_charge: '0',
-        sc_tax_amount: '0',
-        dc_tax_amount: '0',
-        pc_tax_amount: '0',
-        order: [
-          {
-            item_id: data.itemId,
-            quantity: 1,
-            ...(data.variationId && { variation_group_id: 'var_group_001', variation_id: data.variationId }),
-            ...(data.addonId && {
-              addon: [
+        orderinfo: {
+          OrderInfo: {
+            Restaurant: {
+              details: {
+                res_name: 'Dynamite Lounge',
+                address: '2nd Floor, Reliance Mall, Nr.Akshar Chowk',
+                contact_information: '9427846660',
+                restID: '4pv3z1uks5'
+              }
+            },
+            Customer: {
+              details: {
+                email: 'test@example.com',
+                name: data.customerName,
+                address: 'Sample address',
+                phone: data.customerPhone,
+                latitude: '23.0225',
+                longitude: '72.5714'
+              }
+            },
+            Order: {
+              details: {
+                orderID: 'lovable_' + Date.now(),
+                preorder_date,
+                preorder_time,
+                service_charge: '0',
+                sc_tax_amount: '0',
+                delivery_charges: '0',
+                dc_tax_amount: '0',
+                dc_gst_details: [],
+                packing_charges: '0',
+                pc_tax_amount: '0',
+                pc_gst_details: [],
+                order_type: data.orderType,
+                ondc_bap: 'LovableApp',
+                advanced_order: 'N',
+                urgent_order: false,
+                urgent_time: 20,
+                payment_type: data.paymentType,
+                table_no: '',
+                no_of_persons: '0',
+                discount_total: '0',
+                tax_total: '0',
+                discount_type: 'F',
+                total: '100',
+                description: '',
+                created_on,
+                enable_delivery: 1,
+                min_prep_time: 15,
+                callback_url: 'https://webhook.site/test-callback',
+                collect_cash: '100',
+                otp: '1234'
+              }
+            },
+            OrderItem: {
+              details: [
                 {
-                  addon_group_id: 'addon_grp_001',
-                  addon_item_id: data.addonId,
-                  quantity: 1,
+                  id: data.itemId,
+                  name: selectedItem?.name || 'Item',
+                  gst_liability: 'vendor',
+                  item_tax: [],
+                  item_discount: '0',
+                  price: '100.00',
+                  final_price: '100.00',
+                  quantity: '1',
+                  description: '',
+                  variation_name: '',
+                  variation_id: data.variationId || '',
+                  AddonItem: {
+                    details: data.addonId
+                      ? [
+                          {
+                            id: data.addonId,
+                            name: 'Addon Item',
+                            group_name: 'Addons',
+                            price: '10',
+                            group_id: 1,
+                            quantity: '1',
+                          },
+                        ]
+                      : [],
+                  },
                 },
               ],
-            }),
+            },
+            Tax: {
+              details: [],
+            },
+            Discount: {
+              details: [],
+            },
           },
-        ],
-        callback_url: 'https://webhook.site/test-callback',
+        },
+        udid: '',
+        device_type: 'Web',
       };
 
       const response = await fetch('https://qle1yy2ydc.execute-api.ap-southeast-1.amazonaws.com/V1/save_order', {
