@@ -74,9 +74,9 @@ const TestOrder = () => {
     try {
       const { preorder_date, preorder_time, created_on } = getCurrentTime();
       const orderPayload = {
-        app_key: import.meta.env.VITE_PETPOOJA_APP_KEY,
-        app_secret: import.meta.env.VITE_PETPOOJA_APP_SECRET,
-        access_token: import.meta.env.VITE_PETPOOJA_ACCESS_TOKEN,
+        app_key:"of40kvz679yabmignuqjrsdht135exw2",
+        app_secret: "adc43f60895ac52cd2983f2d055920badf310c28",
+        access_token: "973ac7d4358f7badc9deb439e60a7e5a3df8110f",
         res_name: 'Dynamite Lounge',
         address: '2nd Floor, Reliance Mall, Nr.Akshar Chowk',
         Contact_information: '9427846660',
