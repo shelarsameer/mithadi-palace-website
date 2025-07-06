@@ -14,6 +14,7 @@ import About from '@/pages/About';
 import Contact from '@/pages/Contact';
 import Blogs from '@/pages/Blogs';
 import BulkOrder from '@/pages/BulkOrder';
+import TestOrder from '@/pages/TestOrder';
 import { CartProvider } from '@/lib/cart-context';
 import Header from '@/components/Header';
 import Cart from '@/components/Cart';
@@ -59,6 +60,11 @@ const App = () => (
             <Route path="/bulk-order" element={
               <Layout>
                 <BulkOrder />
+              </Layout>
+            } />
+            <Route path="/test-order" element={
+              <Layout>
+                <TestOrder />
               </Layout>
             } />
             <Route path="/blogs" element={
