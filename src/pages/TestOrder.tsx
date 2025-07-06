@@ -70,134 +70,181 @@ const TestOrder = () => {
   };
 
   const onSubmit = async (data: OrderFormData) => {
-    setIsLoading(true);
-    try {
-      const { preorder_date, preorder_time, created_on } = getCurrentTime();
-      const orderPayload = {
-        app_key:"of40kvz679yabmignuqjrsdht135exw2",
-        app_secret: "adc43f60895ac52cd2983f2d055920badf310c28",
-        access_token: "973ac7d4358f7badc9deb439e60a7e5a3df8110f",
-        res_name: 'Dynamite Lounge',
-        address: '2nd Floor, Reliance Mall, Nr.Akshar Chowk',
-        Contact_information: '9427846660',
-        restID: '4pv3z1uks5',
-        'OrderInfo / Customer': {
-          email: 'test@example.com',
-          name: data.customerName,
-          address: 'Sample address',
-          phone: data.customerPhone,
-          latitude: '23.0225',
-          longitude: '72.5714',
-        },
-        'OrderInfo / Order': {
-          orderID: 'G-1',
-          preorder_date,
-          preorder_time,
-          delivery_charges: '0',
-          order_type: data.orderType,
-          ondc_bap: 'LovableApp',
-          advanced_order: 'N',
-          urgent_order: false,
-          urgent_time: 20,
-          payment_type: data.paymentType,
-          table_no: '',
-          no_of_persons: '0',
-          discount_total: '0',
-          discount: '0',
-          discount_type: 'F',
-          total: '100',
-          tax_total: '0',
-          description: '',
-          created_on,
-          packing_charges: '0',
-          min_prep_time: 15,
-          callback_url: 'https://webhook.site/test-callback',
-          collect_cash: '100',
-          otp: '1234',
-          enable_delivery: 1,
-          service_charge: '0',
-          sc_tax_amount: '0',
-          dc_tax_amount: '0',
-          dc_gst_details: {
-            gst_liable: 'vendor',
-            amount: '0',
-          },
-          pc_tax_amount: '0',
-          pc_gst_details: {
-            gst_liable: 'vendor',
-            amount: '0',
-          },
-        },
-        'OrderInfo/ OrderItem': {
-          id: data.itemId,
-          name: selectedItem?.name || 'Item',
-          gst_liability: 'vendor',
-          item_tax: {
-            id: 'tax001',
-            name: 'CGST',
-            amount: '0',
-          },
-          item_discount: '0',
-          price: '100.00',
-          final_price: '100.00',
-          quantity: '1',
-          description: '',
-          variation_name: '',
-          variation_id: data.variationId || '',
-        },
-        'OrderInfo/ OrderItem / AddonItem': data.addonId
-          ? {
-              id: data.addonId,
-              name: 'Addon Item',
-              group_name: 'Addons',
-              price: '10',
-              group_id: '1',
-              quantity: '1',
-            }
-          : {},
-        'OrderInfo/Tax': {
-          id: 'tax001',
-          title: 'CGST',
-          type: 'P',
-          price: '2.5',
-          tax: '0',
-          restaurant_liable_amt: '0',
-        },
-        'OrderInfo/ Discount': {
-          id: 'discount001',
-          title: 'Flat Discount',
-          type: 'F',
-          price: '0',
-        },
-        udid: '',
-        device_type: 'Web',
-      };
+  setIsLoading(true);
+  try {
+    const { preorder_date, preorder_time, created_on } = getCurrentTime();
 
-      const response = await fetch('https://47pfzh5sf2.execute-api.ap-southeast-1.amazonaws.com/V1/save_order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderPayload),
-      });
+    const payload = {
+      app_key: import.meta.env.VITE_PETPOOJA_APP_KEY,
+      app_secret: import.meta.env.VITE_PETPOOJA_APP_SECRET,
+      access_token: import.meta.env.VITE_PETPOOJA_ACCESS_TOKEN,
+      orderinfo: {
+        OrderInfo: {
+          Restaurant: {
+            details: {
+              res_name: "Dynamite Lounge",
+              address: "2nd Floor, Reliance Mall, Nr.Akshar Chowk",
+              contact_information: "9427846660",
+              restID: "4pv3z1uks5",
+            },
+          },
+          Customer: {
+            details: {
+              email: "test@example.com",
+              name: data.customerName,
+              address: "Sample Address",
+              phone: data.customerPhone,
+              latitude: "23.0225",
+              longitude: "72.5714",
+            },
+          },
+          Order: {
+            details: {
+              orderID: "TEST-123",
+              preorder_date,
+              preorder_time,
+              service_charge: "0",
+              sc_tax_amount: "0",
+              delivery_charges: "0",
+              dc_tax_amount: "0",
+              dc_gst_details: [
+                { gst_liable: "vendor", amount: "0" },
+                { gst_liable: "restaurant", amount: "0" },
+              ],
+              packing_charges: "0",
+              pc_tax_amount: "0",
+              pc_gst_details: [
+                { gst_liable: "vendor", amount: "0" },
+                { gst_liable: "restaurant", amount: "0" },
+              ],
+              order_type: data.orderType,
+              ondc_bap: "LovableApp",
+              advanced_order: "N",
+              urgent_order: false,
+              urgent_time: 20,
+              payment_type: data.paymentType,
+              table_no: "",
+              no_of_persons: "0",
+              discount_total: "0",
+              tax_total: "0",
+              discount_type: "F",
+              total: "100",
+              description: "",
+              created_on,
+              enable_delivery: 1,
+              min_prep_time: 15,
+              callback_url: "https://webhook.site/test-callback",
+              collect_cash: "100",
+              otp: "1234",
+            },
+          },
+          OrderItem: {
+            details: [
+              {
+                id: data.itemId,
+                name: selectedItem?.name || "Item",
+                gst_liability: "vendor",
+                item_tax: [
+                  {
+                    id: "11213",
+                    name: "CGST",
+                    amount: "0",
+                  },
+                  {
+                    id: "20375",
+                    name: "SGST",
+                    amount: "0",
+                  },
+                ],
+                item_discount: "0",
+                price: "100.00",
+                final_price: "100.00",
+                quantity: "1",
+                description: "",
+                variation_name: data.variationId ? "Default" : "",
+                variation_id: data.variationId || "",
+                AddonItem: {
+                  details: data.addonId
+                    ? [
+                        {
+                          id: data.addonId,
+                          name: "Addon",
+                          group_name: "Default Addons",
+                          price: "10",
+                          group_id: 1,
+                          quantity: "1",
+                        },
+                      ]
+                    : [],
+                },
+              },
+            ],
+          },
+          Tax: {
+            details: [
+              {
+                id: "11213",
+                title: "CGST",
+                type: "P",
+                price: "2.5",
+                tax: "0",
+                restaurant_liable_amt: "0.00",
+              },
+              {
+                id: "20375",
+                title: "SGST",
+                type: "P",
+                price: "2.5",
+                tax: "0",
+                restaurant_liable_amt: "0.00",
+              },
+            ],
+          },
+          Discount: {
+            details: [
+              {
+                id: "disc-001",
+                title: "Discount",
+                type: "F",
+                price: "0",
+              },
+            ],
+          },
+        },
+      },
+      udid: "",
+      device_type: "Web",
+    };
 
-      const result = await response.json();
-      if (response.ok && result.success) {
-        toast({
-          title: 'Order Placed Successfully!',
-          description: `Order ID: ${result.order_id || 'Generated'}`,
-        });
-        form.reset();
-        setSelectedItem(null);
-      } else {
-        throw new Error(result.message || 'Order placement failed');
-      }
-    } catch (error) {
+    const response = await fetch("https://47pfzh5sf2.execute-api.ap-southeast-1.amazonaws.com/V1/save_order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.success) {
       toast({
-        title: 'Order Failed',
-        description: error instanceof Error ? error.message : 'Unknown error',
-        variant: 'destructive',
+        title: "Order Placed Successfully",
+        description: `Order ID: ${result.order_id || "Generated"}`,
       });
-    } finally {
-      setIsLoading(false);
+      form.reset();
+      setSelectedItem(null);
+    } else {
+      throw new Error(result.message || "Order placement failed");
+    }
+  } catch (error) {
+    toast({
+      title: "Order Failed",
+      description: error instanceof Error ? error.message : "Unknown error",
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
     }
   };
 
