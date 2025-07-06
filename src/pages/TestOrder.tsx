@@ -100,7 +100,7 @@ const TestOrder = () => {
             },
             Order: {
               details: {
-                orderID: 'lovable_' + Date.now(),
+                orderID: G-1,
                 preorder_date,
                 preorder_time,
                 service_charge: '0',
