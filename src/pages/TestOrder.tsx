@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -202,7 +203,178 @@ const TestOrder = () => {
     }
   };
 
-  return <div>// ... UI remains unchanged</div>;
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-2xl mx-auto px-4">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-6">Test PetPooja Order</h1>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="itemId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Select Item</FormLabel>
+                    <Select onValueChange={handleItemChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose an item" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {DUMMY_ITEMS.map((item) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {item.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {selectedItem?.hasVariations && (
+                <FormField
+                  control={form.control}
+                  name="variationId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Select Variation</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose a variation" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {DUMMY_VARIATIONS.map((variation) => (
+                            <SelectItem key={variation.id} value={variation.id}>
+                              {variation.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {selectedItem?.hasAddons && (
+                <FormField
+                  control={form.control}
+                  name="addonId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Select Addon</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose an addon" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {DUMMY_ADDONS.map((addon) => (
+                            <SelectItem key={addon.id} value={addon.id}>
+                              {addon.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <FormField
+                control={form.control}
+                name="customerName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Customer Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter customer name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="customerPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Customer Phone</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter phone number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="orderType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Order Type</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="H">Home Delivery</SelectItem>
+                          <SelectItem value="T">Takeaway</SelectItem>
+                          <SelectItem value="D">Dine In</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="paymentType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Payment Type</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="COD">Cash on Delivery</SelectItem>
+                          <SelectItem value="PAID">Paid Online</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Place Order
+              </Button>
+            </form>
+          </Form>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default TestOrder;
